@@ -4,7 +4,9 @@ import ReactQuill from 'react-quill';
 import BorderColorIcon from '@material-ui/icons/BorderColor';
 import { withStyles } from '@material-ui/core/styles'
 import styles from "./styles";
-import  debounce  from '../Helper';
+import  useDebounce  from '../Helper';
+import db, {timestamp} from '../firebase/firebaseConfig';
+
 
 
 function Editor(props) {
@@ -13,23 +15,41 @@ function Editor(props) {
     const [title, setTitle] = useState('');
     const [id, setId] = useState('');
 
-    const { classes } = props;
+    const { classes, selectedNote,} = props;
     
+    useEffect( ()=>{
+        console.log("selectedNote:",selectedNote);
+        setText(selectedNote.body);
+        setTitle(selectedNote.title);
+        setId(selectedNote.id);
+        console.log("titleInEditor:",title);
+    },[selectedNote, title])
 
-    const updateBody = async (val)=>{
-        console.log(val);
-        await setText(val);
-        update();
+   const updateBodyDebounce = useDebounce(text, 1500);
+
+   useEffect(()=>{
+       console.log("updateBodyDebounce:",updateBodyDebounce);
+       console.log("titleInEditor:",title);
+        if(updateBodyDebounce){
+            db.collection("notes")
+            .doc(selectedNote.id)
+            .update({
+                title:title,
+                body:text,
+                createdAt:timestamp,
+            })
+        }
+   },[updateBodyDebounce])
+
+    const updateBody = (val)=>{
+        setText(val);
     }
-    const update = debounce(()=>{
-        console.log("updating...");
-    }, 3000);
-
+    
+    
     return (
         <div className={classes.editorContainer}>
-            Hello from the editor!
             <ReactQuill
-                value={text}
+                value={text || ''}
                 onChange={updateBody}
             >
             </ReactQuill>

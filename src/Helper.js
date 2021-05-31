@@ -1,3 +1,24 @@
+import { useState, useEffect, useRef } from 'react';
+
+export default function useDebounce(value, delay) {
+
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect( () => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+
+      return () => {
+        clearTimeout(handler);
+      };
+    },[value, delay] );
+
+  return debouncedValue;
+
+}
+
+
 // export default function debounce(a,b,c){
 //     var d,e;
 //     return function(){
@@ -10,18 +31,18 @@
 //     }
 //   }
 
-  export default function debounce(fn, delay){
-    let timer;
-    return function(){
-      console.log("in debounce");
-      var args = arguments;
-      var context=this;
-      clearTimeout(timer);
-      timer=setTimeout(()=>{
-        fn.apply(context, args)
-      },delay)
-    }
-  }
+  // export default function debounce(fn, delay){
+  //   let timer;
+  //   return function(){
+  //     var args = arguments;
+  //     var context=this;
+  //     clearTimeout(timer);
+      
+  //     timer=setTimeout(()=>{
+  //       fn.apply(context, args)
+  //     },delay)
+  //   }
+  // }
   
   export function removeHTMLTags (str) {
     return str.replace(/<[^>]*>?/gm, '');

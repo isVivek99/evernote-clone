@@ -4,12 +4,12 @@ import { withStyles } from '@material-ui/core/styles';
 import styles from './styles';
 import List from '@material-ui/core/List';
 import { Divider, Button } from '@material-ui/core';
-import { useState } from 'react';
+import { useState, } from 'react';
 import SidebarItem from '../sidebarItem/SidebarItem';
 
 function Sidebar(props) {
 
-    const { classes, notes, selectednoteIndex } = props;
+    const { classes, notes, selectedNoteIndex, selectNote, noteId, newNote, deleteNote } = props;
 
     const [addingNote, setAddingNote] = useState(false);
     const [title, setTitle] = useState('');
@@ -25,16 +25,37 @@ function Sidebar(props) {
         setTitle(value);
     }
 
-    const newNote = () => {
+    const newNoteSubmitHandler = () => {
         console.log(title);
+        newNote(title);
         setTitle('');
     }
-    const selectNote = () => {
-        console.log("selevt note");
+    const selectNoteSidebar = (note,index) => {
+        selectNote(note,index);
     }
-    const deleteNote = () =>{
-        console.log("delete note");
+    const deleteNoteSidebar = (note,) =>{
+        deleteNote(note);
+        
     }
+
+    const notesArray =  notes.map((note,index)=>{
+        return(
+            <div key={note.id} >
+                <SidebarItem
+                    note={note}
+                    noteId={noteId}
+                    index={index}
+                    selectedNoteIndex={selectedNoteIndex}
+                    selectNoteSidebar={selectNoteSidebar}
+                    deleteNoteSidebar = {deleteNoteSidebar}>
+                </SidebarItem>
+                <Divider></Divider>
+            </div>
+        )
+    })
+
+        
+   
 
     return (
         <div className={classes.sidebarContainer}>
@@ -55,7 +76,7 @@ function Sidebar(props) {
                         />
                         <Button
                         className={classes.newNoteSubmitBtn}
-                        onClick={newNote}
+                        onClick={newNoteSubmitHandler}
                         >
                             SUBMIT
                         </Button>
@@ -64,23 +85,7 @@ function Sidebar(props) {
                 
             }
             <List>
-            {
-                notes.map((note,index)=>{
-                    return(
-                        <div key={index}>
-                            <SidebarItem
-                                note={note}
-                                index={index}
-                                selectednoteIndex={selectednoteIndex}
-                                selectNote={selectNote}
-                                deleteNote = {deleteNote}
-                            >
-                            </SidebarItem>
-                            <Divider></Divider>
-                        </div>
-                    )
-                })
-            }
+                {notesArray}
             </List>
         
         </div>
