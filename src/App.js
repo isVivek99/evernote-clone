@@ -4,21 +4,25 @@ import db, {timestamp} from './firebase/firebaseConfig';
 import Sidebar from './sidebar/Sidebar';
 import Editor from './editor/Editor';
 
+var noteIndexobj = localStorage.setItem("noteIndex",0);
 const App = () =>{
+
+    
 
     const [selectedNoteIndex, setSelectedNoteIndex] = useState(null);
     const [selectedNote, setSelectedNote] = useState(null);
     const [notes, setNotes] = useState([]);
     const [noteId, setNoteId] = useState("");
+    
 
 
-    useEffect(()=>{
-        const unsub = db.collection("notes").orderBy("createdAt","desc")
+    useEffect(()=>{    
+        console.log("reorder");
+        const unsub = db.collection("notes").orderBy("index", "desc")
             .onSnapshot((snap)=>{
                 const notesdb =  snap.docs.map(doc=>{return({...doc.data(),id : doc.id,});})
                 setNotes(notesdb);
-               
-
+           ;
             return()=>{
                 unsub();
             }
@@ -42,24 +46,18 @@ const App = () =>{
     .add({
         title:title,
         body:"",
-        createdAt:timestamp,
+        updatedAt:timestamp,
+        index:localStorage.getItem("noteIndex"),
     })
+    localStorage.setItem("noteIndex",parseInt(localStorage.getItem("noteIndex"))+1);
+    console.log(localStorage.getItem("noteIndex"));
+}
 
-    // if(newNoteFromDB){
-    //     setSelectedNote(newNoteFromDB);
-    //     setNoteId(newNoteFromDB.id);
-    // }   
- }
-
- const deleteNote = (note) => {
-        console.log("inside delete nnote");
-        setSelectedNote(null);
-        console.log(selectedNote);
-        
-       setTimeout(
+ const deleteNote = async (note) => {
+        console.log("inside delete note");
+        await setSelectedNote(null);
         db.collection("notes").doc(note.id).delete()
-        .catch(error=>console.log(error.message)),1000
-        )
+        .catch(error=>console.log(error.message))
         
  }
 

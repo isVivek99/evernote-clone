@@ -9,27 +9,30 @@ import db, {timestamp} from '../firebase/firebaseConfig';
 
 
 
+
 function Editor(props) {
+
+    const { classes, selectedNote,} = props;
 
     const [text, setText] = useState('');
     const [title, setTitle] = useState('');
     const [id, setId] = useState('');
-
-    const { classes, selectedNote,} = props;
     
     useEffect( ()=>{
-        console.log("selectedNote:",selectedNote);
-        setText(selectedNote.body);
-        setTitle(selectedNote.title);
-        setId(selectedNote.id);
-        console.log("titleInEditor:",title);
-    },[selectedNote, title])
+        async function update(){
+            await setText(selectedNote.body);
+            await setTitle(selectedNote.title);
+            await setId(selectedNote.id);
+        }
+        update();
+    },[selectedNote, title,])
 
    const updateBodyDebounce = useDebounce(text, 1500);
 
    useEffect(()=>{
        console.log("updateBodyDebounce:",updateBodyDebounce);
-       console.log("titleInEditor:",title);
+       console.log("titleInuE2_E:",title);
+       console.log("id:",id);
         if(updateBodyDebounce){
             db.collection("notes")
             .doc(selectedNote.id)
@@ -41,14 +44,24 @@ function Editor(props) {
         }
    },[updateBodyDebounce])
 
-    const updateBody = (val)=>{
-        setText(val);
+    const updateBody = async (val)=>{
+        await setText(val);
     }
-    
+    const updateTitle = async (val) => {
+        await setTitle(val);
+    }
     
     return (
         <div className={classes.editorContainer}>
+            <BorderColorIcon className ={classes.editIcon}></BorderColorIcon>
+              <input type="text"
+              className={classes.titleInput}
+              placeholder="Note title..."
+              value={title? title:""}
+              onChange={e=>{updateTitle(e.target.value)}}
+              />  
             <ReactQuill
+                theme="snow"
                 value={text || ''}
                 onChange={updateBody}
             >

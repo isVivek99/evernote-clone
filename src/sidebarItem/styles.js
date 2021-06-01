@@ -5,6 +5,9 @@ const styles = theme => ({
     textSection: {
       maxWidth: '85%'
     },  
+    listItemText:{
+      cursor:"pointer"
+    },
     deleteIcon: {
       position: 'absolute',
       right: '5px',
@@ -12,7 +15,8 @@ const styles = theme => ({
       '&:hover': {
         color: 'red'
       }
-    }
+    },
+    
   });
   
   export default styles;

@@ -31,8 +31,9 @@ function SidebarItem({note, index, classes, deleteNote, selectNoteSidebar, noteI
                 className={classes.textSection}
                 onClick={()=>selectNoteHandler(note)}>
                 <ListItemText
+                        className={classes.listItemText}
                         primary={note.title}
-                        secondary={removeHTMLTags(note.body.substring(0,30))+"..."}> 
+                        secondary={removeHTMLTags(note.body.toString().substring(0,30))+"..."}> 
                 </ListItemText>
             
             </div>
